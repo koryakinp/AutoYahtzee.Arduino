@@ -146,7 +146,7 @@ void sendMessage(String message) {
 void doCommunicationCheck() {
   while(!communicationCheckComplete) {
     receiveMessage("PI:COMMUNICATION HANDSHAKE");
-    sendMessage("ARDUINO: COMMUNICATION HANDSHAKE");
+    sendMessage("ARDUINO:COMMUNICATION HANDSHAKE");
     Serial.println("Communication check complete");
     delay(100);
     communicationCheckComplete = true;
