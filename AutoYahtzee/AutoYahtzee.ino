@@ -28,7 +28,7 @@ bool diagnosticsResult[] = { false, false, false, false };
 
 bool diagnosticsCopmlete = false;
 bool startUpCheckComplete = false;
-bool communicationCheckComplete = false;
+bool communicationCheckComplete = true;
 bool horSetupComplete = false;
 bool verSetupComplete = false;
 bool setupComplete = false;
@@ -73,7 +73,6 @@ void updateSwitchStates() {
 void doDiagnostics() {
 
   bool allButtonsPressed = false;
-  bool diagnosticsFinished = false;
   
   Serial.println("Starting diagnostics..");
   
@@ -93,8 +92,19 @@ void doDiagnostics() {
     } else if(boxOpen && !boxClose && !towerDown && !towerUp) {
       diagnosticsResult[3] = true;
       horMotor.run(FORWARD);
+    } else if(boxClose && towerDown && !boxOpen && !towerUp) {
+      verMotor.run(FORWARD);
+      horMotor.run(BACKWARD);
+    } else if(boxClose && towerUp && !boxOpen && !towerDown) {
+      verMotor.run(BACKWARD);
+      horMotor.run(BACKWARD);
+    } else if(boxOpen && towerDown && !boxClose && !towerUp) {
+      verMotor.run(FORWARD);
+      horMotor.run(FORWARD);
+    } else if(boxOpen && towerUp && !boxClose && !towerDown) {
+      verMotor.run(BACKWARD);
+      horMotor.run(FORWARD);
     } else if(allButtonsPressed && towerUp && towerDown && !boxOpen && !boxClose) {
-
       Serial.println("Diagnostics complete.");
       diagnosticsCopmlete = true;
       
@@ -146,10 +156,10 @@ void doCommunicationCheck() {
 void doSteup() {
 
   closeDoor();
-  moveDown();
+  moveUp();
   
   servo.attach(9);
-  servo.write(ServoAngles::LOAD);
+  servo.write(ServoAngles::MOVE);
   
   Serial.println("Setup complete. Ready for operatrion.");
   delay(2000);

@@ -4,13 +4,13 @@
 StateManager::StateManager() {
   _currentState = 0;
 
-  _states[0] = States::UNLOAD;
-  _states[1] = States::PRE_LIFT;
-  _states[2] = States::LIFT;
-  _states[3] = States::THROW;
-  _states[4] = States::PRE_LOWER; 
-  _states[5] = States::LOWER;
-  _states[6] = States::PRE_UNLOAD;  
+  _states[0] = States::THROW;
+  _states[1] = States::PRE_LOWER; 
+  _states[2] = States::LOWER;
+  _states[3] = States::PRE_UNLOAD;
+  _states[4] = States::UNLOAD;
+  _states[5] = States::PRE_LIFT;
+  _states[6] = States::LIFT;  
 }
     
 void StateManager::StepForward() {
