@@ -1,6 +1,6 @@
 #include "States.h"
 
-const String States::UNLOAD = "A";
+const String States::UNLOAD = "Unload";
 const String States::PRE_LIFT = "PreLift";
 const String States::LIFT = "Lift";
 const String States::THROW = "Trow";
