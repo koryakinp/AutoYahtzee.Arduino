@@ -52,12 +52,12 @@ void setup() {
 }
 
 void loop() {
-  if(!diagnosticsCopmlete) {
+  if(!communicationCheckComplete) {
+    doCommunicationCheck();
+  } else if(!diagnosticsCopmlete) {
     doDiagnostics();
   } else if(!setupComplete) {
     doSteup();
-  } else if(!communicationCheckComplete) {
-    doCommunicationCheck();
   } else {
     doWork();
   }
@@ -115,17 +115,31 @@ void doDiagnostics() {
 }
 
 
+void receiveMessage(String message) {
+  Serial.println("Waiting for a message: " + message);
+  bool messageReceived = false;
+  while(!messageReceived) {
+   if (Serial.available() > 0) {
+      String data = Serial.readStringUntil('\n');
+      if(data == message) {
+        messageReceived = true;
+        Serial.println("Message Received: " + message);
+      }
+    } 
+  }
+}
+
+void sendMessage(String message) {
+  Serial.println(message);
+}
+
 void doCommunicationCheck() {
   while(!communicationCheckComplete) {
-    if (Serial.available() > 0) {
-      String data = Serial.readStringUntil('\n');
-      if(data == "COMMUNICATION CHECK") {
-        communicationCheckComplete = true;
-        Serial.println("Communication check complete");
-      }
-    }
-
+    receiveMessage("PI:COMMUNICATION HANDSHAKE");
+    sendMessage("ARDUINO: COMMUNICATION HANDSHAKE");
+    Serial.println("Communication check complete");
     delay(100);
+    communicationCheckComplete = true;
   }
 }
 
@@ -167,6 +181,8 @@ void doWork() {
     }
   } else if(state == States::THROW) {
     if(doThrowCheck()) {
+      sendMessage("ARDUINO:READY TO THROW");
+      receiveMessage("PI:THROW");
       doThrow();
       stateManager.StepForward();
       Serial.println("Current State: " + stateManager.GetCurrentState());
@@ -180,6 +196,7 @@ void doWork() {
     }
   } else if(state == States::LOWER) {
     if(doLowerCheck()) {
+      receiveMessage("PI:RELOAD");
       doLower();
       stateManager.StepForward();
       Serial.println("Current State: " + stateManager.GetCurrentState());
