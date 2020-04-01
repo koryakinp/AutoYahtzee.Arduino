@@ -28,6 +28,7 @@ bool diagnosticsResult[] = { false, false, false, false };
 
 bool diagnosticsCopmlete = false;
 bool startUpCheckComplete = false;
+bool communicationCheckComplete = false;
 bool horSetupComplete = false;
 bool verSetupComplete = false;
 bool setupComplete = false;
@@ -55,6 +56,8 @@ void loop() {
     doDiagnostics();
   } else if(!setupComplete) {
     doSteup();
+  } else if(!communicationCheckComplete) {
+    doCommunicationCheck();
   } else {
     doWork();
   }
@@ -111,6 +114,20 @@ void doDiagnostics() {
   horMotor.run(RELEASE);
 }
 
+
+void doCommunicationCheck() {
+  while(!communicationCheckComplete) {
+    if (Serial.available() > 0) {
+      String data = Serial.readStringUntil('\n');
+      if(data == "COMMUNICATION CHECK") {
+        communicationCheckComplete = true;
+        Serial.println("Communication check complete");
+      }
+    }
+
+    delay(100);
+  }
+}
 
 void doSteup() {
 
