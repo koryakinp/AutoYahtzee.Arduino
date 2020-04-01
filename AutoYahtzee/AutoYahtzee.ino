@@ -74,7 +74,7 @@ void doDiagnostics() {
   
   Serial.println("Starting diagnostics..");
   
-  while(!allButtonsPressed) {
+  while(!diagnosticsCopmlete) {
   
     updateSwitchStates();
    
@@ -90,29 +90,25 @@ void doDiagnostics() {
     } else if(boxOpen && !boxClose && !towerDown && !towerUp) {
       diagnosticsResult[3] = true;
       horMotor.run(FORWARD);
+    } else if(allButtonsPressed && towerUp && towerDown && !boxOpen && !boxClose) {
+
+      Serial.println("Diagnostics complete.");
+      diagnosticsCopmlete = true;
+      
+      verMotor.run(RELEASE);
+      horMotor.run(RELEASE);
     } else {
       verMotor.run(RELEASE);
       horMotor.run(RELEASE);
     }
   
     allButtonsPressed = diagnosticsResult[0] && diagnosticsResult[1] && diagnosticsResult[2] && diagnosticsResult[3];
+    
     delay(20);
   }
-  
-  Serial.println("All switches responding");
   
   verMotor.run(RELEASE);
   horMotor.run(RELEASE);
-  
-  while(!diagnosticsFinished) {
-    updateSwitchStates();
-    diagnosticsFinished = towerUp && towerDown && !boxOpen && !boxClose;
-    delay(20);
-  }
-  
-  Serial.println("Diagnostics complete.");
-  
-  diagnosticsCopmlete = true;
 }
 
 
