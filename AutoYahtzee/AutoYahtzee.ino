@@ -28,7 +28,7 @@ bool diagnosticsResult[] = { false, false, false, false };
 
 bool diagnosticsCopmlete = false;
 bool startUpCheckComplete = false;
-bool communicationCheckComplete = true;
+bool communicationCheckComplete = false;
 bool horSetupComplete = false;
 bool verSetupComplete = false;
 bool setupComplete = false;
