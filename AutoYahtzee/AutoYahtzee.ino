@@ -39,6 +39,7 @@ StateManager stateManager;
 
 void setup() {
   Serial.begin(9600);
+  Serial.flush();
   pinMode(TOWER_DOWN_PIN, INPUT_PULLUP);
   pinMode(TOWER_UP_PIN, INPUT_PULLUP);
   pinMode(BOX_CLOSE_PIN, INPUT_PULLUP);
@@ -144,9 +145,10 @@ void sendMessage(String message) {
 }
 
 void doCommunicationCheck() {
+  
   while(!communicationCheckComplete) {
-    receiveMessage("PI:COMMUNICATION HANDSHAKE");
     sendMessage("ARDUINO:COMMUNICATION HANDSHAKE");
+    receiveMessage("PI:COMMUNICATION HANDSHAKE");
     Serial.println("Communication check complete");
     delay(100);
     communicationCheckComplete = true;
@@ -192,11 +194,12 @@ void doWork() {
   } else if(state == States::THROW) {
     if(doThrowCheck()) {
       sendMessage("ARDUINO:READY TO THROW");
+      delay(100);
       receiveMessage("PI:THROW");
       doThrow();
       stateManager.StepForward();
       Serial.println("Current State: " + stateManager.GetCurrentState());
-      delay(1000);
+      delay(500);
     }
   } else if(state == States::PRE_LOWER) {
     if(doPreLowerCheck()) {
