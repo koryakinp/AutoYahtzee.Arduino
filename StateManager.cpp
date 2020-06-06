@@ -11,6 +11,7 @@ StateManager::StateManager() {
   _states[4] = States::UNLOAD;
   _states[5] = States::PRE_LIFT;
   _states[6] = States::LIFT;  
+  _states[7] = States::SHUTDOWN;
 }
     
 void StateManager::StepForward() {
@@ -22,4 +23,8 @@ void StateManager::StepForward() {
 
 String StateManager::GetCurrentState() {
   return _states[_currentState];
+}
+
+void StateManager::ForceShutDownState() {
+  _currentState = 8;
 }

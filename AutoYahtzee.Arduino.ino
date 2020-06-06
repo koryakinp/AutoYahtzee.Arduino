@@ -8,11 +8,11 @@ Servo servo;
 
 //FORWARD - close
 //BACKWARD - open
-AF_DCMotor horMotor(1);
+AF_DCMotor horMotor(2);
 
 //FORWARD - up
 //BACKWARD - down
-AF_DCMotor verMotor(2);
+AF_DCMotor verMotor(1);
 
 const int TOWER_DOWN_PIN = A0;
 const int TOWER_UP_PIN = A1;
@@ -33,7 +33,10 @@ bool horSetupComplete = false;
 bool verSetupComplete = false;
 bool setupComplete = false;
 
+unsigned long last_recording;
+
 const int servoSpeed = 3;
+const unsigned long MAX_IDLE = 60000;
 
 StateManager stateManager;
 
@@ -170,10 +173,16 @@ void doSteup() {
 
 void doWork() {
   String state = stateManager.GetCurrentState();
-  updateSwitchStates();
+
+  if(state == States::SHUTDOWN) {
+    return;
+  }
+
+  last_recording = millis();
   
+  updateSwitchStates();
+
   if(state == States::UNLOAD) {
-    
     if(doUnloadCheck()) {
       doUnload();
       stateManager.StepForward();
@@ -255,6 +264,10 @@ void doPreUnload() {
 
 void closeDoor() {
   while(!boxClose) {
+    if(idleCheck()) {
+      return;
+    }
+    
     horMotor.run(FORWARD);
     updateSwitchStates();
     delay(20);
@@ -266,6 +279,10 @@ void closeDoor() {
 
 void openDoor() {
   while(!boxOpen) {
+    if(idleCheck()) {
+      return;
+    }
+    
     horMotor.run(BACKWARD);
     updateSwitchStates();
     delay(20);
@@ -277,6 +294,10 @@ void openDoor() {
 
 void moveUp() {
   while(!towerUp) {
+    if(idleCheck()) {
+      return;
+    }
+    
     verMotor.run(FORWARD);
     updateSwitchStates();
     delay(20);
@@ -288,6 +309,10 @@ void moveUp() {
 
 void moveDown() {
   while(!towerDown) {
+    if(idleCheck()) {
+      return;
+    }
+    
     verMotor.run(BACKWARD);
     updateSwitchStates();
     delay(20);
@@ -372,6 +397,17 @@ bool doPreUnloadCheck() {
   return res;
 }
 
+bool idleCheck() {
+  if(millis() - last_recording > MAX_IDLE) {
+    verMotor.run(RELEASE);
+    horMotor.run(RELEASE);
+    stateManager.ForceShutDownState();
+    Serial.println("EMERGENCY SHUTDOWN");
+    return true;
+  }
+
+  return false;
+}
 
 void printSwitchStates() {
   Serial.println("OPEN: " + String(boxOpen) + " | CLOSE: " + String(boxClose) + " | UP: " + String(towerUp) + " | DOWN: " + String(towerDown));

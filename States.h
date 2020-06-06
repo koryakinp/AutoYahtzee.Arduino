@@ -10,4 +10,5 @@ class States
     static const String PRE_LOWER;
     static const String LOWER;
     static const String PRE_UNLOAD;
+    static const String SHUTDOWN;
 };

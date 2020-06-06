@@ -7,3 +7,4 @@ const String States::THROW = "Trow";
 const String States::PRE_LOWER = "PreLower";
 const String States::LOWER = "Lower";
 const String States::PRE_UNLOAD = "PreUnload";
+const String States::SHUTDOWN = "Shutdown";
