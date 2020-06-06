@@ -15,10 +15,14 @@ StateManager::StateManager() {
 }
     
 void StateManager::StepForward() {
+  if(_currentState == 7) {
+    return;
+  }
+
   _currentState++;
   if(_currentState == 7) {
     _currentState = 0;
-  }
+  } 
 }
 
 String StateManager::GetCurrentState() {
@@ -26,5 +30,5 @@ String StateManager::GetCurrentState() {
 }
 
 void StateManager::ForceShutDownState() {
-  _currentState = 8;
+  _currentState = 7;
 }
